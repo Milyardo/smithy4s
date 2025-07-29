@@ -2,12 +2,11 @@ $version: "2"
 
 metadata suppressions = [
     {
-        id: "UnreferencedShape",
-        namespace: "smithy4s.dynamic.model",
+        id: "UnreferencedShape"
+        namespace: "smithy4s.dynamic.model"
         reason: "This is a library namespace."
     }
 ]
-
 
 namespace smithy4s.dynamic.model
 
@@ -26,46 +25,68 @@ structure Model {
 string IdRef
 
 map MetadataMap {
-  key: String,
-  value: Document
+    key: String
+    value: Document
 }
 
 map ShapeMap {
-  key: IdRef,
-  value: Shape
+    key: IdRef
+    value: Shape
 }
 
 map TraitMap {
-  key: IdRef,
-  value: Document
+    key: IdRef
+    value: Document
 }
 
 @discriminated("type")
 union Shape {
-  blob: BlobShape,
-  byte: ByteShape,
-  string: StringShape,
-  boolean: BooleanShape,
-  integer: IntegerShape,
-  short: ShortShape,
-  long: LongShape,
-  double: DoubleShape,
-  float: FloatShape,
-  bigDecimal: BigDecimalShape,
-  bigInteger: BigIntegerShape,
-  document: DocumentShape,
-  timestamp: TimestampShape,
-  list: ListShape,
-  set: SetShape,
-  map: MapShape,
-  structure: StructureShape,
-  union: UnionShape,
-  operation: OperationShape,
-  service: ServiceShape,
-  resource: ResourceShape,
-  @jsonName("enum")
-  _enum: EnumShape,
-  intEnum: IntEnumShape,
+    blob: BlobShape
+
+    byte: ByteShape
+
+    string: StringShape
+
+    boolean: BooleanShape
+
+    integer: IntegerShape
+
+    short: ShortShape
+
+    long: LongShape
+
+    double: DoubleShape
+
+    float: FloatShape
+
+    bigDecimal: BigDecimalShape
+
+    bigInteger: BigIntegerShape
+
+    document: DocumentShape
+
+    timestamp: TimestampShape
+
+    list: ListShape
+
+    set: SetShape
+
+    map: MapShape
+
+    structure: StructureShape
+
+    union: UnionShape
+
+    operation: OperationShape
+
+    service: ServiceShape
+
+    resource: ResourceShape
+
+    @jsonName("enum")
+    _enum: EnumShape
+
+    intEnum: IntEnumShape
 }
 
 structure StringShape {
@@ -180,12 +201,12 @@ structure MemberShape {
 }
 
 list MemberList {
-  member: MemberShape
+    member: MemberShape
 }
 
 map MemberMap {
-  key: String,
-  value: MemberShape
+    key: String
+    value: MemberShape
 }
 
 structure StructureShape {
@@ -236,8 +257,3 @@ structure ResourceShape {
   @default([])
   resources: MemberList
 }
-
-
-
-
-

@@ -27,11 +27,11 @@ object LowHigh extends Enumeration[LowHigh] with ShapeTag.Companion[LowHigh] {
   val hints: Hints = Hints.empty
 
   /** low */
-  case object LOW extends LowHigh("LOW", "Low", 0, Hints.empty) {
+  case object LOW extends LowHigh("Low", "LOW", 0, Hints.empty) {
     override val hints: Hints = Hints(smithy.api.Documentation("low")).lazily
   }
   /** high */
-  case object HIGH extends LowHigh("HIGH", "High", 1, Hints.empty) {
+  case object HIGH extends LowHigh("High", "HIGH", 1, Hints.empty) {
     override val hints: Hints = Hints(smithy.api.Documentation("high")).lazily
   }
 

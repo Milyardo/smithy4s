@@ -22,7 +22,7 @@ import smithy4s.schema.Schema.string
 import smithy4s.schema.Schema.struct
 import smithy4s.schema.Schema.timestamp
 
-final case class DefaultTest(one: Int = 1, two: String = "test", three: List[String] = List(), nineteen: Nullable[Int] = Null, twenty: Nullable[Int] = Null, four: Option[List[String]] = None, five: Option[String] = None, six: Option[Int] = None, seven: Option[Document] = None, eight: Option[Map[String, String]] = None, nine: Option[Short] = None, ten: Option[Double] = None, eleven: Option[Float] = None, twelve: Option[Long] = None, thirteen: Option[Timestamp] = None, fourteen: Option[Timestamp] = None, fifteen: Option[Timestamp] = None, sixteen: Option[Byte] = None, seventeen: Option[Blob] = None, eighteen: Option[Boolean] = None)
+final case class DefaultTest(one: Int = 1, two: String = "test", three: List[String] = List(), nineteen: Nullable[Int] = Null, twenty: Nullable[Int] = Null, four: Option[List[String]] = List(), five: Option[String] = None, six: Option[Int] = None, seven: Option[Document] = smithy4s.Document.nullDoc, eight: Option[Map[String, String]] = Map(), nine: Option[Short] = None, ten: Option[Double] = None, eleven: Option[Float] = None, twelve: Option[Long] = None, thirteen: Option[Timestamp] = None, fourteen: Option[Timestamp] = None, fifteen: Option[Timestamp] = None, sixteen: Option[Byte] = None, seventeen: Option[Blob] = None, eighteen: Option[Boolean] = None)
 
 object DefaultTest extends ShapeTag.Companion[DefaultTest] {
   val id: ShapeId = ShapeId("smithy4s.example", "DefaultTest")

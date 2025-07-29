@@ -38,17 +38,18 @@ import smithy4s.schema.FieldFilter
 private[http4s] class SimpleRestJsonCodecs(
     val jsonCodecs: JsonPayloadCodecCompiler,
     val fieldFilter: FieldFilter,
-    val hostPrefixInjection: Boolean
+    val hostPrefixInjection: Boolean,
+    val rawHttpLabelValues: Boolean
 ) extends SimpleProtocolCodecs {
   private val hintMask =
     alloy.SimpleRestJson.protocol.hintMask
 
   def transformJsonCodecs(f: JsonPayloadCodecCompiler => JsonPayloadCodecCompiler): SimpleRestJsonCodecs =
-    new SimpleRestJsonCodecs(f(jsonCodecs), fieldFilter, hostPrefixInjection)
+    new SimpleRestJsonCodecs(f(jsonCodecs), fieldFilter, hostPrefixInjection, rawHttpLabelValues)
 
   @deprecated(
     message = """Use withFieldFilter instead.
-      
+
   Mapping:
    - newExplicitDefaultsEncoding = false -> FieldFilter.Default
    - newExplicitDefaultsEncoding = true -> FieldFilter.EncodeAll
@@ -68,11 +69,20 @@ private[http4s] class SimpleRestJsonCodecs(
   ): SimpleRestJsonCodecs = new SimpleRestJsonCodecs(
     jsonCodecs.configureJsoniterCodecCompiler(_.withFieldFilter(fieldFilter)),
     fieldFilter,
-    hostPrefixInjection
+    hostPrefixInjection,
+    rawHttpLabelValues
   )
 
+  def withRawHttpLabelValues(enabled: Boolean): SimpleRestJsonCodecs =
+    new SimpleRestJsonCodecs(
+      jsonCodecs = jsonCodecs,
+      fieldFilter = fieldFilter,
+      hostPrefixInjection = hostPrefixInjection,
+      rawHttpLabelValues = enabled
+    )
+
   def withHostPrefixInjection(newHostPrefixInjection: Boolean): SimpleRestJsonCodecs =
-    new SimpleRestJsonCodecs(jsonCodecs, fieldFilter, newHostPrefixInjection)
+    new SimpleRestJsonCodecs(jsonCodecs, fieldFilter, newHostPrefixInjection, rawHttpLabelValues)
 
   // val mediaType = HttpMediaType("application/json")
   private val payloadEncoders: BlobEncoder.Compiler =
@@ -80,6 +90,11 @@ private[http4s] class SimpleRestJsonCodecs(
 
   private val payloadDecoders =
     jsonCodecs.configureJsoniterCodecCompiler(_.withHintMask(hintMask)).decoders
+
+  // ALWAYS using maximum possible arity for client side, as this mechanism is a DDOS protection
+  // that does not make sense for clients.
+  private val clientPayloadDecoders =
+    jsonCodecs.configureJsoniterCodecCompiler(_.withHintMask(hintMask).withMaxArity(Int.MaxValue)).decoders
 
   // Adding X-Amzn-Errortype as well to facilitate interop with Amazon-issued code-generators.
   private val errorHeaders = List(
@@ -110,8 +125,8 @@ private[http4s] class SimpleRestJsonCodecs(
     val baseRequest = HttpRequest(HttpMethod.POST, toSmithy4sHttpUri(uri, None), Map.empty, Blob.empty)
     HttpUnaryClientCodecs.builder
       .withBodyEncoders(payloadEncoders)
-      .withSuccessBodyDecoders(payloadDecoders)
-      .withErrorBodyDecoders(payloadDecoders)
+      .withSuccessBodyDecoders(clientPayloadDecoders)
+      .withErrorBodyDecoders(clientPayloadDecoders)
       .withErrorDiscriminator(HttpDiscriminator.fromResponse(errorHeaders, _).pure[F])
       .withMetadataDecoders(Metadata.Decoder)
       .withMetadataEncoders(
@@ -122,6 +137,7 @@ private[http4s] class SimpleRestJsonCodecs(
       .withRequestTransformation(fromSmithy4sHttpRequest[F](_).pure[F])
       .withResponseTransformation[Response[F]](toSmithy4sHttpResponse[F](_))
       .withHostPrefixInjection(hostPrefixInjection)
+      .withRawHttpLabelValues(rawHttpLabelValues)
       .build()
 
   }

@@ -21,9 +21,9 @@ object EnumWithSymbols extends Enumeration[EnumWithSymbols] with ShapeTag.Compan
 
   val hints: Hints = Hints.empty
 
-  case object FooFooFoo extends EnumWithSymbols("FooFooFoo", "foo:foo:foo", 0, Hints.empty)
-  case object BarBarBar extends EnumWithSymbols("BarBarBar", "bar:bar:bar", 1, Hints.empty)
-  case object Value2 extends EnumWithSymbols("Value2", "_", 2, Hints.empty)
+  case object FooFooFoo extends EnumWithSymbols("foo:foo:foo", "FooFooFoo", 0, Hints.empty)
+  case object BarBarBar extends EnumWithSymbols("bar:bar:bar", "BarBarBar", 1, Hints.empty)
+  case object Value2 extends EnumWithSymbols("_", "Value2", 2, Hints.empty)
 
   val values: List[EnumWithSymbols] = List(
     FooFooFoo,

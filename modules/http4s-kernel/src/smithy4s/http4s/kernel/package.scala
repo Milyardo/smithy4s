@@ -56,7 +56,12 @@ package object kernel {
       case 0             => headers
       case contentLength => headers.put("Content-Length" -> contentLength.toString)
     }
-    Request(method, fromSmithy4sHttpUri(req.uri), headers = updatedHeaders, body = toStream(req.body))
+    Request(
+      method,
+      fromSmithy4sHttpUri(req.uri),
+      headers = updatedHeaders,
+      body = toStream(req.body)
+    )
   }
 
   def toSmithy4sHttpUri(uri: Uri, pathParams: Option[PathParams] = None): Smithy4sHttpUri = {
@@ -102,7 +107,7 @@ package object kernel {
     }
 
   def fromSmithy4sHttpUri(uri: Smithy4sHttpUri): Uri = {
-    val path = Uri.Path.Root.addSegments(uri.path.map(Uri.Path.Segment(_)).toVector)
+    val path = Uri.Path.Root.addSegments(uri.path.map(Uri.Path.Segment.encoded))
     val authority =
       uri.host.map(h => Uri.Authority(host = Uri.RegName(h), port = uri.port))
     Uri(
